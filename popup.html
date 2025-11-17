@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="popup.css">
+<title>B站稍后再看进度</title>
+</head>
+
+<body>
+    <h1>稍后再看进度</h1>
+
+    <input id="search" type="text" placeholder="搜索标题 / BV号">
+
+    <div id="buttons">
+        <button id="export">导出</button>
+        <button id="import">导入</button>
+        <button id="clearFinished">清理已看完</button>
+    </div>
+
+    <input id="importFile" type="file" accept=".json" style="display:none">
+
+    <div id="list"></div>
+    <div id="empty">暂无记录</div>
+
+<script src="popup.js"></script>
+</body>
+</html>
