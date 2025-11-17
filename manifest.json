@@ -1,13 +1,10 @@
 {
   "manifest_version": 3,
   "name": "B站稍后再看播放进度增强器",
-  "version": "2.5",
-  "description": "记录并恢复稍后再看视频进度，支持搜索、封面缓存、导入导出、清理等功能。",
-  "permissions": ["storage", "scripting", "downloads"],
-  "host_permissions": [
-    "https://www.bilibili.com/*",
-    "https://api.bilibili.com/*"
-  ],
+  "version": "1.2",
+  "description": "记录稍后再看视频的观看进度，支持多P进度，并可提示恢复上次观看时间。",
+  "permissions": ["storage", "scripting", "activeTab"],
+  "host_permissions": ["https://www.bilibili.com/*"],
   "action": {
     "default_popup": "popup.html",
     "default_title": "稍后再看进度"
@@ -20,7 +17,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["inject.js", "utils.js"],
+      "resources": ["inject.js"],
       "matches": ["https://www.bilibili.com/*"]
     }
   ]

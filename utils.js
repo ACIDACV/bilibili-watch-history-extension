@@ -1,38 +1,40 @@
-// 获取视频信息（带缓存）
-async function getVideoInfo(bvid) {
-    const cacheKey = "cache_info_" + bvid;
-
-    // 读取缓存
-    const cache = await chrome.storage.local.get([cacheKey]);
-    if (cache[cacheKey]) return cache[cacheKey];
-
-    // 请求接口
-    const url = `https://api.bilibili.com/x/web-interface/view?bvid=${bvid}`;
-    try {
-        const res = await fetch(url);
-        const json = await res.json();
-
-        if (json.code === 0) {
-            const info = {
-                title: json.data.title,
-                cover: json.data.pic
-            };
-            chrome.storage.local.set({ [cacheKey]: info });
-            return info;
-        }
-    } catch (e) {}
-
-    return { title: bvid, cover: "" };
-}
-
-// 更稳定的“是否在稍后再看”
-async function checkWatchLater(bvid) {
+// 判断是否在稍后再看列表中
+async function isInWatchLater() {
     try {
         const res = await fetch("https://api.bilibili.com/x/v2/history/toview");
-        const json = await res.json();
-        if (json.code === 0) {
-            return json.data.list.some(v => v.bvid === bvid);
-        }
-    } catch (e) {}
-    return false;
+        const data = await res.json();
+        if (!data.data || !data.data.list) return false;
+
+        const list = data.data.list;
+        const aid = unsafeWindow.aid || window.aid || null;
+
+        return list.some(item => item.aid === aid);
+    } catch (e) {
+        console.warn("稍后再看状态判断失败", e);
+        return false;
+    }
 }
+
+// 解析视频信息（含多 P）
+function getVideoInfo() {
+    const url = location.href;
+
+    const match = url.match(/\/video\/(BV[\w]+)/);
+    if (!match) return null;
+
+    const bvid = match[1];
+
+    let p = 1;
+    try {
+        const search = new URL(url).searchParams;
+        p = parseInt(search.get("p") || "1", 10);
+    } catch (e) {}
+
+    return {
+        key: `${bvid}_p${p}`,
+        bvid,
+        p
+    };
+}
+
+export { isInWatchLater, getVideoInfo };
